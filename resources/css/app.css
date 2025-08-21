@@ -1,0 +1,126 @@
+@import "tailwindcss";
+@import "tailwindcss/preflight" layer(base);
+@import "tailwindcss/utilities" layer(utilities);
+
+@theme {
+    --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+}
+
+@layer utilities {
+    .btn {
+        @apply px-4 py-2 rounded-md font-medium transition-colors duration-200;
+    }
+    
+    .btn-primary {
+        @apply bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2;
+    }
+    
+    .btn-secondary {
+        @apply bg-gray-200 text-gray-800 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2;
+    }
+    
+    .form-input {
+        @apply w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent;
+    }
+
+    /* Post card styles */
+    .post-card {
+        @apply bg-white rounded-lg shadow-md overflow-hidden transition-shadow duration-300;
+    }
+    
+    .post-card:hover {
+        @apply shadow-lg;
+    }
+    
+    .post-excerpt {
+        @apply text-gray-600 leading-relaxed;
+    }
+
+    /* Comment styles */
+    .comment-item {
+        @apply bg-gray-50 rounded-lg p-4 border border-gray-200;
+    }
+
+    /* Pagination styles */
+    .pagination {
+        @apply flex justify-center items-center space-x-2;
+    }
+
+    .pagination .page-item {
+        @apply inline-flex;
+    }
+
+    .pagination .page-link {
+        @apply px-3 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 transition-colors duration-200;
+    }
+
+    .pagination .page-item.active .page-link {
+        @apply bg-blue-600 text-white border-blue-600;
+    }
+
+    .pagination .page-item.disabled .page-link {
+        @apply opacity-50 cursor-not-allowed;
+    }
+}
+
+/* Custom animations */
+@keyframes fadeIn {
+    from { 
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to { 
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animate-fadeIn {
+    animation: fadeIn 0.5s ease-out;
+}
+
+/* Prose styling for content */
+.prose-custom {
+    line-height: 1.75;
+    max-width: none;
+}
+
+.prose-custom h2 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #111827;
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+}
+
+.prose-custom h3 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #374151;
+    margin-top: 1.5rem;
+    margin-bottom: 0.75rem;
+}
+
+.prose-custom p {
+    color: #374151;
+    line-height: 1.75;
+    margin-bottom: 1rem;
+}
+
+.prose-custom ul {
+    list-style-type: disc;
+    list-style-position: inside;
+    margin-bottom: 1rem;
+}
+
+.prose-custom li {
+    margin-bottom: 0.5rem;
+}
+
+.prose-custom blockquote {
+    border-left: 4px solid #3b82f6;
+    padding-left: 1rem;
+    font-style: italic;
+    color: #6b7280;
+    margin: 1rem 0;
+}
