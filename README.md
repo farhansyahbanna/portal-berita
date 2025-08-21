@@ -1,7 +1,7 @@
 # Dokumentasi Proyek Portal Berita
 
 ## 📋 Overview
-Portal Berita adalah aplikasi web berbasis Laravel dan Vue.js yang menyediakan platform untuk publishing berita/artikel dengan fitur komentar dan manajemen konten untuk admin.
+Aplikasi Portal Berita berbasis Website menggunakan Framework Laravel dan Vue.js yang menyediakan platform untuk publishing berita/artikel dengan fitur komentar dan manajemen konten untuk admin.
 
 ## 🏗️ Arsitektur Teknis
 - **Frontend**: Laravel Blade, Vue.js 3, Tailwind CSS
@@ -172,13 +172,6 @@ DB_DATABASE=portal_berita
 DB_USERNAME=root
 DB_PASSWORD=
 
-# Optional: Email configuration
-MAIL_MAILER=smtp
-MAIL_HOST=sandbox.smtp.mailtrap.io
-MAIL_PORT=2525
-MAIL_USERNAME=
-MAIL_PASSWORD=
-```
 
 ### Tailwind Configuration
 ```javascript
@@ -275,23 +268,6 @@ Posts mencakup topik:
 - Touch-friendly buttons
 - Optimized images dan icons
 
-## 🚀 Deployment
-
-### Production Build
-```bash
-# Build assets untuk production
-npm run build
-
-# Optimize application
-php artisan optimize
-php artisan config:cache
-php artisan route:cache
-php artisan view:cache
-
-# Set environment to production
-APP_ENV=production
-APP_DEBUG=false
-```
 
 ### Server Requirements
 - PHP 8.1+ dengan extensions: mbstring, xml, mysql, json
@@ -344,26 +320,6 @@ Untuk production, pastikan:
 ```env
 APP_DEBUG=false
 ```
-
-## 📈 Future Enhancements
-
-### Planned Features
-- [ ] Email notifications
-- [ ] Social media integration
-- [ ] Advanced search functionality
-- [ ] Categories and tags
-- [ ] Image upload for posts
-- [ ] User profiles
-- [ ] API documentation (Swagger)
-- [ ] Unit tests
-- [ ] Docker deployment
-
-### Technical Improvements
-- [ ] Laravel Dusk untuk browser testing
-- [ ] Laravel Horizon untuk queue management
-- [ ] Laravel Telescope untuk debugging
-- [ ] API rate limiting
-- [ ] Advanced caching strategies
 
 ## 📝 License & Credits
 
