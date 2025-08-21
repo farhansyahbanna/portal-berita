@@ -383,4 +383,4 @@ APP_DEBUG=false
 
 ---
 
-**Note**: Dokumentasi ini diperbarui terakhir pada 20 Agustus 2024. Untuk informasi terbaru, selalu refer ke README.md di repository project.
+**Note**: Dokumentasi ini diperbarui terakhir pada 21 Agustus 2025. Untuk informasi terbaru, selalu refer ke README.md di repository project.
