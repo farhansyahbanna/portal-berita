@@ -1,7 +1,7 @@
 # Dokumentasi Proyek Portal Berita
 
 ## 📋 Overview
-Aplikasi Portal Berita berbasis Website menggunakan Framework Laravel dan Vue.js yang menyediakan platform untuk publishing berita/artikel dengan fitur komentar dan manajemen konten untuk admin.
+Aplikasi Portal Berita berbasis Website menggunakan Framework Laravel dan Vue.js yang menyediakan platform untuk publishing berita/artikel dengan fitur komentar dan manajemen konten untuk admin dan editor.
 
 ## 🏗️ Arsitektur Teknis
 - **Frontend**: Laravel Blade, Vue.js 3, Tailwind CSS
@@ -41,7 +41,16 @@ Aplikasi Portal Berita berbasis Website menggunakan Framework Laravel dan Vue.js
   - Access Admin Dashboard
   - View Statistics
 
-### 2. Regular User
+  ### 2. Editor User
+- **Login**: /login
+- **Email**: editor@portalberita.com
+- **Password**: editor123
+- **Permissions**:
+  - CRUD Posts
+  - Access Editor Dashboard
+  - View Statistics
+
+### 3. Regular User
 - **Permissions**:
   - View published posts
   - Add comments
@@ -51,7 +60,7 @@ Aplikasi Portal Berita berbasis Website menggunakan Framework Laravel dan Vue.js
 
 ### 🔐 Authentication System
 - Laravel Auth dengan custom login page
-- Role-based authentication (admin/user)
+- Role-based authentication (admin/editor/user)
 - Simple password reset tanpa email
 - Protected admin routes
 
@@ -119,9 +128,12 @@ php artisan serve
 ```
 
 ### Default Admin Account
-Setelah menjalankan seeder, admin account otomatis dibuat:
+Setelah menjalankan seeder, admin dan editor account otomatis dibuat:
 - **Email**: admin@portalberita.com
 - **Password**: password123
+
+- **Email**: editor@portalberita.com
+- **Password**: editord123
 
 ## 📡 API Endpoints
 
@@ -133,15 +145,15 @@ POST   /api/comments       # Create new comment
 GET    /api/posts/{id}/comments # Get post comments
 ```
 
-### Admin API (Protected)
+### Admin & Editor API (Protected)
 ```http
 GET    /admin/dashboard    # Admin dashboard data
 GET    /admin/posts        # List all posts
 POST   /admin/posts        # Create new post
 PUT    /admin/posts/{id}   # Update post
 DELETE /admin/posts/{id}   # Delete post
-GET    /admin/comments     # List all comments
-DELETE /admin/comments/{id} # Delete comment
+GET    /admin/comments     # List all comments (Admin)
+DELETE /admin/comments/{id} # Delete comment (Admin)
 ```
 
 ## 🎨 Frontend Components
@@ -339,4 +351,4 @@ APP_DEBUG=false
 
 ---
 
-**Note**: Dokumentasi ini diperbarui terakhir pada 21 Agustus 2025. Untuk informasi terbaru, selalu refer ke README.md di repository project.
+**Note**: Dokumentasi ini diperbarui terakhir pada 1 September 2025. Untuk informasi terbaru, selalu refer ke README.md di repository project.

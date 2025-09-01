@@ -14,7 +14,8 @@ class PostSeeder extends Seeder
      */
     public function run(): void
     {
-         $adminUsers = User::where('role', 'admin')->get();
+        $adminUsers = User::where('role', 'admin')->get();
+        $editorUsers = User::where('role', 'editor')->get();
         $faker = \Faker\Factory::create('id_ID');
 
         $posts = [
@@ -90,6 +91,20 @@ class PostSeeder extends Seeder
                 'content' => $this->generateLongContent($faker),
                 'published_at' => null,
                 'user_id' => $adminUsers->last()->id,
+            ],
+
+             // Posts oleh editor
+            [
+                'title' => 'Trend Teknologi 2024 oleh Editor',
+                'content' => $this->generateLongContent($faker),
+                'published_at' => now()->subDays(3),
+                'user_id' => $editorUsers->first()->id,
+            ],
+            [
+                'title' => 'Panduan Laravel untuk Pemula',
+                'content' => $this->generateLongContent($faker),
+                'published_at' => now()->subDays(1),
+                'user_id' => $editorUsers->last()->id,
             ],
         ];
 

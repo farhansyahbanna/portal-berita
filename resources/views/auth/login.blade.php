@@ -8,7 +8,7 @@
         <!-- Header -->
         <div class="text-center">
             <h2 class="mt-2 text-3xl font-extrabold text-gray-900 tracking-tight">
-                Login Admin
+                Login
             </h2>
             <p class="mt-2 text-sm text-gray-600">Silakan masuk untuk melanjutkan ke dashboard</p>
         </div>

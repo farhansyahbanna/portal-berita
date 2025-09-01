@@ -10,22 +10,22 @@ class LoginController extends Controller
 {
     use AuthenticatesUsers;
 
-    protected $redirectTo = '/admin/dashboard';
+    protected $redirectTo = '/admin/posts';
 
     public function __construct()
     {
         $this->middleware('guest')->except('logout');
     }
 
-    protected function authenticated(Request $request, $user)
+     protected function authenticated(Request $request, $user)
     {
-        if (!$user->isAdmin()) {
-            $this->guard()->logout();
-            return redirect()->route('login')
-                ->with('error', 'You do not have admin access.');
+        if ($user->isAdmin()) {
+            return redirect()->intended('/admin/dashboard');
+        } elseif ($user->isEditor()) {
+            return redirect()->intended('/admin/editor-dashboard');
         }
 
-        return redirect()->intended($this->redirectPath());
+        return redirect()->intended('/');
     }
 
     public function showLoginForm()

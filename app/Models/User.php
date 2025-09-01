@@ -52,6 +52,16 @@ class User extends Authenticatable
         return $this->role === 'admin';
     }
 
+    public function isEditor()
+    {
+        return $this->role === 'editor';
+    }
+
+     public function isUser()
+    {
+        return $this->role === 'user';
+    }
+
     public function posts()
     {
         return $this->hasMany(Post::class);
@@ -62,15 +72,32 @@ class User extends Authenticatable
         return $this->role === $role;
     }
 
-    // Method scope untuk admin
+ 
     public function scopeAdmin($query)
     {
         return $query->where('role', 'admin');
     }
 
-    // Method scope untuk user biasa
+
     public function scopeRegular($query)
     {
         return $query->where('role', 'user');
     }
+
+    public function scopeEditor($query)
+    {
+        return $query->where('role', 'editor');
+    }
+
+    public function canEditPost(Post $post)
+    {
+        return $this->isAdmin() || ($this->isEditor() && $this->id === $post->user_id);
+    }
+
+    public function canDeletePost(Post $post)
+    {
+        return $this->isAdmin() || ($this->isEditor() && $this->id === $post->user_id);
+    }
+
+
 }

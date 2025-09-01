@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin - @yield('title', 'Dashboard')</title>
+    <title>@yield('title', 'Dashboard')</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     @vite(['resources/css/app.css', 'resources/js/admin.js'])
 </head>
@@ -12,18 +12,38 @@
     <div class="flex">
         <div class="w-64 bg-blue-800 text-white min-h-screen">
             <div class="p-4">
-                <h1 class="text-xl font-bold">Admin Panel</h1>
+                @auth
+                    @if(auth()->user()->isAdmin())
+                        <h1 class="text-xl font-bold">Admin Panel</h1>
+                    @else
+                        <h1 class="text-xl font-bold">Editor Panel</h1>
+                    @endif
+                @endauth
             </div>
             <nav class="mt-6">
-                <a href="{{ route('admin.dashboard') }}" class="block py-2 px-4 {{ request()->routeIs('admin.dashboard') ? 'bg-blue-700' : 'hover:bg-blue-700' }}">
-                    Dashboard
-                </a>
+                 @auth
+                    {{-- Dashboard Admin --}}
+                    @if(auth()->user()->isAdmin())
+                        <a href="{{ route('admin.dashboard') }}" class="block py-2 px-4 {{ request()->routeIs('admin.dashboard') ? 'bg-blue-700' : 'hover:bg-blue-700' }}">
+                            Dashboard 
+                        </a>
+                    @else
+                    {{-- Dashboard Editor --}}
+                        <a href="{{ route('admin.editor.dashboard') }}" class="block py-2 px-4 {{ request()->routeIs('admin.editor.dashboard') ? 'bg-blue-700' : 'hover:bg-blue-700' }}">
+                            Dashboard 
+                        </a>
+                    @endif
+                @endauth
                 <a href="{{ route('admin.posts.index') }}" class="block py-2 px-4 {{ request()->routeIs('admin.posts.*') ? 'bg-blue-700' : 'hover:bg-blue-700' }}">
                     Posts
                 </a>
-                <a href="{{ route('admin.comments.index') }}" class="block py-2 px-4 {{ request()->routeIs('admin.comments.*') ? 'bg-blue-700' : 'hover:bg-blue-700' }}">
-                    Comments
-                </a>
+                 @auth
+                    @if(auth()->user()->isAdmin())
+                        <a href="{{ route('admin.comments.index') }}" class="block py-2 px-4 {{ request()->routeIs('admin.comments.*') ? 'bg-blue-700' : 'hover:bg-blue-700' }}">
+                            Comments
+                        </a>
+                    @endif
+                @endauth
                 <form method="POST" action="{{ route('logout') }}" class="block">
                     @csrf
                     <button type="submit" class="w-full text-left py-2 px-4 hover:bg-blue-700">

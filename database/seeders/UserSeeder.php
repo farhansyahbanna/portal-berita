@@ -23,36 +23,21 @@ class UserSeeder extends Seeder
             'email_verified_at' => now(),
         ]);
 
-        // Additional admin users
+        // Editor users
         User::create([
             'name' => 'Editor Berita',
             'email' => 'editor@portalberita.com',
             'password' => Hash::make('editor123'),
-            'role' => 'admin',
+            'role' => 'editor',
             'email_verified_at' => now(),
         ]);
 
-        // Regular users (for comments)
-        User::create([
-            'name' => 'Sucipto',
-            'email' => 'sucipto@example.com',
-            'password' => Hash::make('sucipto123'),
-            'role' => 'user',
-            'email_verified_at' => now(),
-        ]);
 
+        // Regular users
         User::create([
-            'name' => 'Kipli',
-            'email' => 'Kipli@example.com',
-            'password' => Hash::make('kipli123'),
-            'role' => 'user',
-            'email_verified_at' => now(),
-        ]);
-
-        User::create([
-            'name' => 'Santoso',
-            'email' => 'Santoso@example.com',
-            'password' => Hash::make('santoso123'),
+            'name' => 'John Doe',
+            'email' => 'john@example.com',
+            'password' => Hash::make('user123'),
             'role' => 'user',
             'email_verified_at' => now(),
         ]);

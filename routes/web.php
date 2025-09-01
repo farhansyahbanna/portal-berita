@@ -4,6 +4,7 @@ use App\Http\Controllers\PostController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\CommentController as AdminCommentController;
+use App\Http\Controllers\Admin\EditorDashboardController;
 use App\Http\Controllers\Admin\PostController as AdminPostController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -29,8 +30,16 @@ Auth::routes(['register' => false]);
 // Admin routes
 Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-    
-    // Posts routes
+
+
+    // Comments routes
+    Route::get('/comments', [AdminCommentController::class, 'index'])->name('comments.index');
+    Route::delete('/comments/{comment}', [AdminCommentController::class, 'destroy'])->name('comments.destroy');
+});
+
+// Routes Admin and Editor
+Route::prefix('admin')->name('admin.')->middleware(['auth', 'editor'])->group(function () {
+    Route::get('/editor-dashboard', [EditorDashboardController::class, 'index'])->name('editor.dashboard');
     Route::get('/posts', [AdminPostController::class, 'index'])->name('posts.index');
     Route::get('/posts/create', [AdminPostController::class, 'create'])->name('posts.create');
     Route::post('/posts', [AdminPostController::class, 'store'])->name('posts.store');
@@ -38,8 +47,5 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
     Route::get('/posts/{post}/edit', [AdminPostController::class, 'edit'])->name('posts.edit');
     Route::put('/posts/{post}', [AdminPostController::class, 'update'])->name('posts.update');
     Route::delete('/posts/{post}', [AdminPostController::class, 'destroy'])->name('posts.destroy');
-    
-    // Comments routes
-    Route::get('/comments', [AdminCommentController::class, 'index'])->name('comments.index');
-    Route::delete('/comments/{comment}', [AdminCommentController::class, 'destroy'])->name('comments.destroy');
 });
+
