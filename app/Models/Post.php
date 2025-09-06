@@ -25,12 +25,14 @@ class Post extends Model
     protected $fillable = [
         'title',
         'content',
+        'status',
         'published_at',
         'user_id'
     ];
 
     protected $casts = [
         'published_at' => 'datetime',
+        'status' => 'string',
     ];
 
     public function user()
@@ -51,5 +53,25 @@ class Post extends Model
     public function getExcerptAttribute()
     {
          return Str::of(strip_tags($this->content))->limit(150);
+    }
+
+    public function scopePublished($query)
+    {
+        return $query->where('status', 'published');
+    }
+
+    public function scopePending($query)
+    {
+        return $query->where('status', 'pending');
+    }
+
+    public function scopeDraft($query)
+    {
+        return $query->where('status', 'draft');
+    }
+
+    public function scopeArchived($query)
+    {
+        return $query->where('status', 'archived');
     }
 }
