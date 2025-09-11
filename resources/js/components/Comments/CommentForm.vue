@@ -1,102 +1,164 @@
 <template>
-  <div class="comment-form bg-white rounded-lg p-6">
-    <h3 class="text-xl font-semibold text-gray-900 mb-4">Tambah Komentar</h3>
+  <div class="comment-form">
+    <h3 class="text-lg font-medium text-gray-900 mb-4">Tambah Komentar</h3>
     
-    <form @submit.prevent="submitComment" class="space-y-4">
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <form @submit.prevent="submitComment">
+      <!-- Error Messages -->
+      <div v-if="Object.keys(errors).length > 0" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+        <ul>
+          <li v-for="(errorMessages, field) in errors" :key="field">
+            <span v-for="(message, index) in errorMessages" :key="index">{{ message }}</span>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Success Message -->
+      <div v-if="successMessage" class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
+        {{ successMessage }}
+      </div>
+
+      <!-- Form untuk user yang belum login -->
+      <div v-if="!isAuthenticated" class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
         <div>
-          <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Nama</label>
+          <label for="author_name" class="block text-sm font-medium text-gray-700 mb-1">Nama *</label>
           <input
             type="text"
-            id="name"
-            v-model="form.name"
+            id="author_name"
+            v-model="form.author_name"
             required
-            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            :class="{ 'border-red-500': errors.author_name }"
             placeholder="Masukkan nama Anda"
-          >
+          />
         </div>
-        
         <div>
-          <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+          <label for="author_email" class="block text-sm font-medium text-gray-700 mb-1">Email *</label>
           <input
             type="email"
-            id="email"
-            v-model="form.email"
+            id="author_email"
+            v-model="form.author_email"
             required
-            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            :class="{ 'border-red-500': errors.author_email }"
             placeholder="Masukkan email Anda"
-          >
+          />
         </div>
       </div>
-      
-      <div>
-        <label for="content" class="block text-sm font-medium text-gray-700 mb-1">Komentar</label>
+
+      <!-- Comment Content -->
+      <div class="mb-4">
+        <label for="content" class="block text-sm font-medium text-gray-700 mb-1">Komentar *</label>
         <textarea
           id="content"
           v-model="form.content"
           required
           rows="4"
-          class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          :class="{ 'border-red-500': errors.content }"
           placeholder="Tulis komentar Anda di sini..."
         ></textarea>
       </div>
-      
+
+      <!-- Submit Button -->
       <button
         type="submit"
         :disabled="loading"
-        class="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
+        class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
       >
         <span v-if="loading">Mengirim...</span>
         <span v-else>Kirim Komentar</span>
       </button>
+
+      <!-- Info untuk moderated comments -->
+      <p class="text-sm text-gray-500 mt-3">
+        ⓘ Komentar akan ditinjau oleh admin sebelum ditampilkan
+      </p>
     </form>
   </div>
 </template>
 
 <script>
+import { ref, computed } from 'vue'
+import { useAuthStore } from '../../stores/auth'
+import { useApi } from '../../composables/useApi'
+
 export default {
+  name: 'CommentForm',
   props: {
     postId: {
-      type: Number,
+      type: [String, Number],
       required: true
     }
   },
-  data() {
-    return {
-      form: {
-        name: '',
-        email: '',
-        content: ''
-      },
-      loading: false
+  setup(props, { emit }) {
+    const authStore = useAuthStore()
+    const { makeRequest } = useApi()
+    
+    const form = ref({
+      author_name: '',
+      author_email: '',
+      content: ''
+    })
+
+    const errors = ref({})
+    const loading = ref(false)
+    const successMessage = ref('')
+
+    const isAuthenticated = computed(() => authStore.isAuthenticated)
+
+    // Jika user sudah login, isi otomatis data user
+    if (isAuthenticated.value && authStore.user) {
+      form.value.author_name = authStore.user.name
+      form.value.author_email = authStore.user.email
     }
-  },
-  methods: {
-    async submitComment() {
-      this.loading = true;
-      
+
+    const submitComment = async () => {
       try {
-        const response = await axios.post('/comments', {
-          ...this.form,
-          post_id: this.postId
-        });
+        loading.value = true
+        errors.value = {}
+        successMessage.value = ''
+
+        const response = await makeRequest(`/api/posts/${props.postId}/comments`, 'POST', form.value)
         
-        // Reset form
-        this.form.name = '';
-        this.form.email = '';
-        this.form.content = '';
+        if (response.success) {
+          successMessage.value = 'Komentar berhasil dikirim! Menunggu persetujuan admin.'
+          form.value.content = '' // Reset content
+          
+          // Emit event untuk refresh comments
+          emit('comment-added')
+        }
         
-        // Emit event to refresh comments
-        this.$root.$emit('refresh-comments');
-        
-        this.$toast.success('Komentar berhasil dikirim!');
       } catch (error) {
-        console.error('Error submitting comment:', error);
-        this.$toast.error('Gagal mengirim komentar. Silakan coba lagi.');
+        console.error('Failed to submit comment:', error)
+        
+        if (error.response?.status === 422) {
+          errors.value = error.response.data.errors || {}
+        } else {
+          errors.value = { general: [error.response?.data?.message || 'Gagal mengirim komentar'] }
+        }
       } finally {
-        this.loading = false;
+        loading.value = false
       }
+    }
+
+    return {
+      form,
+      errors,
+      loading,
+      successMessage,
+      isAuthenticated,
+      submitComment
     }
   }
 }
 </script>
+
+<style scoped>
+.comment-form {
+  background-color: white;
+  padding: 1.5rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  margin-bottom: 2rem;
+}
+</style>

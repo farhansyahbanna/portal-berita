@@ -69,113 +69,19 @@
         <div v-if="post" class="mt-8 bg-white rounded-lg shadow-lg p-6">
             <h2 class="text-2xl font-bold text-gray-900 mb-6">Komentar</h2>
 
-            <!-- Comment List -->
-            <div v-if="post.comments && post.comments.length > 0" class="space-y-6 mb-8">
-                <div v-for="comment in post.comments" :key="comment.id" class="comment-item bg-gray-50 rounded-lg p-4 border border-gray-200">
-                    <div class="flex items-start space-x-3">
-                        <div class="flex-shrink-0">
-                            <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
-                                <span class="text-blue-600 font-bold text-sm">
-                                    {{ getInitials(comment.name) }}
-                                </span>
-                            </div>
-                        </div>
-                        
-                        <div class="flex-1 min-w-0">
-                            <div class="flex items-center justify-between mb-2">
-                                <h4 class="font-semibold text-gray-900">{{ comment.name }}</h4>
-                                <span class="text-sm text-gray-500">{{ formatDate(comment.created_at, 'short') }}</span>
-                            </div>
-                            
-                            <p class="text-gray-700 leading-relaxed">{{ comment.content }}</p>
-                            
-                            <div class="mt-2 flex items-center space-x-4">
-                                <span class="text-xs text-gray-500">{{ comment.email }}</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <!-- Comment List Component -->
+            <CommentList 
+                :comments="post.comments" 
+                :loading="loading"
+                :postId="parseInt(id)"
+                @refresh-comments="fetchPost"
+            />
 
-            <!-- Empty Comments -->
-            <div v-else class="text-center py-8 bg-gray-50 rounded-lg mb-8">
-                <svg class="w-12 h-12 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
-                </svg>
-                <p class="text-gray-500">Belum ada komentar. Jadilah yang pertama berkomentar!</p>
-            </div>
-
-            <!-- Add Comment Form -->
-            <div class="bg-white border border-gray-200 rounded-lg p-6">
-                <h3 class="text-lg font-semibold text-gray-900 mb-4">Tambah Komentar</h3>
-                
-                <form @submit.prevent="submitComment" class="space-y-4">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Nama *</label>
-                            <input
-                                id="name"
-                                v-model="commentForm.name"
-                                type="text"
-                                required
-                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                :class="{ 'border-red-500': commentErrors.name }"
-                                placeholder="Masukkan nama Anda"
-                            >
-                            <p v-if="commentErrors.name" class="text-red-500 text-xs mt-1">{{ commentErrors.name }}</p>
-                        </div>
-                        
-                        <div>
-                            <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email *</label>
-                            <input
-                                id="email"
-                                v-model="commentForm.email"
-                                type="email"
-                                required
-                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                :class="{ 'border-red-500': commentErrors.email }"
-                                placeholder="Masukkan email Anda"
-                            >
-                            <p v-if="commentErrors.email" class="text-red-500 text-xs mt-1">{{ commentErrors.email }}</p>
-                        </div>
-                    </div>
-
-                    <div>
-                        <label for="content" class="block text-sm font-medium text-gray-700 mb-1">Komentar *</label>
-                        <textarea
-                            id="content"
-                            v-model="commentForm.content"
-                            required
-                            rows="4"
-                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
-                            :class="{ 'border-red-500': commentErrors.content }"
-                            placeholder="Tulis komentar Anda di sini..."
-                        ></textarea>
-                        <p v-if="commentErrors.content" class="text-red-500 text-xs mt-1">{{ commentErrors.content }}</p>
-                    </div>
-
-                    <div class="flex items-center justify-between">
-                        <p class="text-sm text-gray-500">* Wajib diisi</p>
-                        
-                        <button
-                            type="submit"
-                            :disabled="commentLoading"
-                            class="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
-                        >
-                            <span v-if="commentLoading">Mengirim...</span>
-                            <span v-else>Kirim Komentar</span>
-                        </button>
-                    </div>
-
-                    <div v-if="commentSuccess" class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded">
-                        Komentar berhasil dikirim!
-                    </div>
-
-                    <div v-if="commentError" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
-                        {{ commentError }}
-                    </div>
-                </form>
-            </div>
+            <!-- Comment Form Component -->
+            <CommentForm 
+                :post-id="post.id"
+                @comment-submitted="handleCommentSubmitted"
+            />
         </div>
 
         <!-- Related Posts -->
@@ -196,17 +102,20 @@
 import { ref, onMounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
-import { formatDate, getInitials } from '../../utils/helpers'
+import { formatDate } from '../../utils/helpers'
 import { usePostsStore } from '../../stores/posts'
-import { useCommentsStore } from '../../stores/comments'
 import PostCard from './PostCard.vue'
 import LoadingSpinner from '../Shared/LoadingSpinner.vue'
+import CommentList from '../Comments/CommentList.vue'
+import CommentForm from '../Comments/CommentForm.vue'
 
 export default {
     name: 'PostDetail',
     components: {
         PostCard,
-        LoadingSpinner
+        LoadingSpinner,
+        CommentList,
+        CommentForm
     },
     props: {
         id: {
@@ -219,30 +128,17 @@ export default {
         const router = useRouter()
         const postsStore = usePostsStore()
         const { currentPost, posts } = storeToRefs(postsStore)
-        const commentsStore = useCommentsStore()
-
         
         const relatedPosts = ref([])
         const loading = ref(false)
         const error = ref('')
 
-        // Comment form
-        const commentForm = ref({
-            name: '',
-            email: '',
-            content: ''
-        })
-        const commentErrors = ref({})
-        const commentLoading = ref(false)
-        const commentSuccess = ref(false)
-        const commentError = ref('')
-
-       const fetchPost = async () => {
+        const fetchPost = async () => {
             loading.value = true
             error.value = ''
 
             try {
-                await postsStore.fetchPost(props.id) // ⬅️ isi postsStore.post
+                await postsStore.fetchPost(props.id)
                 await fetchRelatedPosts()
             } catch (err) {
                 error.value = err.response?.data?.message || 'Gagal memuat artikel'
@@ -252,48 +148,37 @@ export default {
             }
         }
 
+        const fetchComments = async () => {
+            try {
+                loadingComments.value = true
+                await postStore.fetchPostComments(props.id)
+                comments.value = postStore.currentPostComments
+            } catch (err) {
+                console.error('Gagal memuat komentar:', err)
+            } finally {
+                loadingComments.value = false
+            }
+        }
+
         const fetchRelatedPosts = async () => {
             try {
                 await postsStore.fetchPosts({ per_page: 4, exclude: props.id })
-                relatedPosts.value = posts.value.filter(p => p.id !== props.id) // ambil dari store
+                relatedPosts.value = posts.value.filter(p => p.id !== props.id)
             } catch (err) {
                 console.error('Error fetching related posts:', err)
             }
         }
 
-        const submitComment = async () => {
-            commentLoading.value = true
-            commentErrors.value = {}
-            commentSuccess.value = false
-            commentError.value = ''
-
-            try {
-                await commentsStore.createComment({
-                    post_id: props.id,
-                    ...commentForm.value
-                })
-
-                commentSuccess.value = true
-                commentForm.value = { name: '', email: '', content: '' }
-                
-                // Refresh post to get updated comments
-                await fetchPost()
-            } catch (err) {
-                if (err.response?.status === 422) {
-                    commentErrors.value = err.response.data.errors
-                } else {
-                    commentError.value = err.response?.data?.message || 'Gagal mengirim komentar'
-                }
-            } finally {
-                commentLoading.value = false
-            }
+        const handleCommentSubmitted = () => {
+            // Refresh post to get updated comments
+            fetchPost()
         }
 
         const sharePost = () => {
             if (navigator.share) {
                 navigator.share({
-                    title: post.value.title,
-                    text: post.value.excerpt,
+                    title: currentPost.value.title,
+                    text: currentPost.value.excerpt,
                     url: window.location.href
                 })
             } else {
@@ -307,9 +192,10 @@ export default {
             fetchPost()
         })
 
-        watch(() => props.id, (newId) => {
+         watch(() => props.id, async (newId) => {
             if (newId) {
-                fetchPost()
+                await fetchPost()
+                await fetchComments()
             }
         })
 
@@ -318,15 +204,10 @@ export default {
             relatedPosts,
             loading,
             error,
-            commentForm,
-            commentErrors,
-            commentLoading,
-            commentSuccess,
-            commentError,
             formatDate,
-            getInitials,
-            submitComment,
-            sharePost
+            handleCommentSubmitted,
+            sharePost,
+            fetchComments
         }
     }
 }
@@ -374,14 +255,5 @@ export default {
     font-style: italic;
     color: #6b7280;
     margin: 1rem 0;
-}
-
-.comment-item {
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.comment-item:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 </style>

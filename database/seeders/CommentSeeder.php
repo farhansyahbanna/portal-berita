@@ -33,6 +33,7 @@ class CommentSeeder extends Seeder
                     'name' => $user->name,
                     'email' => $user->email,
                     'content' => $this->generateCommentContent($faker),
+                    'status' => 'approved',
                     'created_at' => $faker->dateTimeBetween($post->published_at, 'now'),
                     'updated_at' => now(),
                 ];

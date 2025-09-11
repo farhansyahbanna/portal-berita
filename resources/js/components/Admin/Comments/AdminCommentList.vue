@@ -102,13 +102,19 @@
 
               <!-- Post Title -->
               <td class="px-6 py-4 whitespace-nowrap">
-                <div class="text-sm font-medium text-gray-900" v-if="comment.post">
-                  {{ comment.post.title }}
+                <div v-if="comment.post">
+                  <div class="text-sm font-medium text-gray-900">
+                    {{ comment.post.title }}
+                  </div>
+                  <div v-if="comment.post.deleted_at" class="text-xs text-red-500 italic">
+                    (Post sudah dihapus oleh admin)
+                  </div>
                 </div>
-                <div class="text-sm text-gray-500" v-else>
-                  Post telah dihapus
+                <div v-else class="text-sm text-gray-500">
+                  Post tidak ditemukan
                 </div>
               </td>
+
 
               <!-- Author -->
               <td class="px-6 py-4 whitespace-nowrap">
@@ -212,7 +218,15 @@
           @page-changed="handlePageChange"
         />
       </div>
+      <div class="px-8 py-4 bg-gray-50 border-t border-gray-200">
+        <button @click="goDashboard" class="text-blue-600 hover:text-blue-800 font-medium">
+            ← Kembali
+        </button>
+      </div>
+      
     </div>
+
+    
 
     <!-- Bulk Actions -->
     <div v-if="selectedComments.length > 0" class="fixed bottom-4 right-4 bg-white shadow-lg rounded-lg p-4 border">
@@ -250,6 +264,7 @@
 
 <script>
 import { ref, onMounted, watch } from 'vue'
+import { useRouter } from 'vue-router'
 import { useApi } from '../../../composables/useApi'
 import Pagination from '../../Shared/Pagination.vue'
 
@@ -259,6 +274,7 @@ export default {
     Pagination
   },
   setup() {
+    const router = useRouter()
     const comments = ref(null)
     const loading = ref(true)
     const error = ref('')
@@ -417,6 +433,10 @@ export default {
       }
     }
 
+    const goDashboard = () => {
+      router.push('/admin/dashboard')
+    }
+
     onMounted(() => {
       fetchComments()
     })
@@ -442,7 +462,8 @@ export default {
       deleteComment,
       handlePageChange,
       debouncedSearch,
-      fetchComments
+      fetchComments,
+      goDashboard
     }
   }
 }

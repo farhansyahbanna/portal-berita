@@ -13,7 +13,8 @@ class Comment extends Model
         'post_id',
         'name',
         'email',
-        'content'
+        'content',
+        'status'
     ];
 
     public function post()

@@ -182,6 +182,12 @@
           :total="posts.meta.total"
           @page-changed="handlePageChange"
         />
+        
+      </div>
+      <div class="px-8 py-4 bg-gray-50 border-t border-gray-200">
+          <button @click="goDashboard" class="text-blue-600 hover:text-blue-800 font-medium">
+              ← Kembali
+          </button>
       </div>
     </div>
 
@@ -228,6 +234,7 @@
 
 <script>
 import { ref, onMounted, watch } from 'vue'
+import { useRouter } from 'vue-router'
 import { useApi } from '../../composables/useApi'
 import Pagination from '../Shared/Pagination.vue'
 import Modal from '../Shared/Modal.vue'
@@ -239,6 +246,7 @@ export default {
     Modal
   },
   setup() {
+    const router = useRouter()
     const posts = ref(null)
     const loading = ref(true)
     const error = ref('')
@@ -366,6 +374,10 @@ export default {
       fetchPosts()
     }
 
+    const goDashboard = () => {
+      router.push('/editor/dashboard')
+    }
+
     const debouncedSearch = debounce(() => {
       filters.value.page = 1
       fetchPosts()
@@ -410,7 +422,8 @@ export default {
       closeDeleteModal,
       handlePageChange,
       debouncedSearch,
-      fetchPosts
+      fetchPosts,
+      goDashboard
     }
   }
 }

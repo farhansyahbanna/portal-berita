@@ -15,13 +15,13 @@ Aplikasi Portal Berita berbasis Website menggunakan Framework Laravel dan Vue.js
 
 ### Tables
 1. **users**
-   - id, name, email, password, role (admin/user), timestamps
+   - id, name, email, password, role (admin/editor/user), timestamps
 
 2. **posts**
-   - id, title, content, published_at, user_id, timestamps
+   - id, title, content,status, published_at, user_id, timestamps
 
 3. **comments**
-   - id, post_id, name, email, content, timestamps
+   - id, post_id, name, email, content, status, timestamps
 
 ### Relationships
 - User hasMany Posts
@@ -60,7 +60,7 @@ Aplikasi Portal Berita berbasis Website menggunakan Framework Laravel dan Vue.js
 
 ### 🔐 Authentication System
 - Laravel Auth dengan custom login page
-- Role-based authentication (admin/editor/user)
+- Role-based authentication (admin/editor)
 - Simple password reset tanpa email
 - Protected admin routes
 
