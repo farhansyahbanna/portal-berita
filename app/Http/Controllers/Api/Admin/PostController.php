@@ -35,8 +35,7 @@ class PostController extends Controller
         try {
             // Validasi input
             $query = Post::with('user')
-            ->whereNotNull('published_at')
-                ->orderBy('published_at', 'desc');
+                ->orderBy('created_at', 'desc');
 
             // Search filter
             if ($request->has('search')) {
@@ -149,27 +148,68 @@ class PostController extends Controller
     // Method untuk update post
     public function update(Request $request, $id)
     {
-        try {
-            $validated = $request->validate([
-                'title' => 'required|string|max:255',
-                'content' => 'required|string',
-                'published_at' => 'nullable|date',
-            ]);
+        $post = Post::find($id);
 
-            $post = Post::findOrFail($id);
-            $post->update($validated);
+        if (!$post) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Post not found'
+            ], 404);
+        }
+
+        $validator = Validator::make($request->all(), [
+            'title' => 'required|string|max:255',
+            'content' => 'required|string',
+            'published_at' => 'nullable|date',
+            'status' => 'sometimes|in:draft,pending,published,archived' // opsional
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+        try {
+            $updateData = [
+                'title' => $request->title,
+                'content' => $request->content,
+            ];
+
+            if ($request->has('published_at') && $request->published_at !== null) {
+                $updateData['published_at'] = $request->published_at;
+
+                $updateData['status'] = 'published';
+            } else if ($request->has('published_at') && $request->published_at === null) {
+     
+                $updateData['published_at'] = null;
+                $updateData['status'] = 'draft';
+            }
+
+            if ($request->has('status')) {
+                $updateData['status'] = $request->status;
+                
+    
+                if ($request->status !== 'published' && $request->published_at !== null) {
+                    $updateData['published_at'] = null;
+                }
+            }
+
+            $post->update($updateData);
 
             return response()->json([
                 'success' => true,
-                'message' => 'Post berhasil diperbarui',
+                'message' => 'Post berhasil diupdate',
                 'data' => $post
             ]);
 
         } catch (\Exception $e) {
+            \Log::error('AdminPostController update error: ' . $e->getMessage());
+            
             return response()->json([
                 'success' => false,
-                'message' => 'Gagal memperbarui post',
-                'error' => $e->getMessage()
+                'message' => 'Gagal memperbarui Post'
             ], 500);
         }
     }

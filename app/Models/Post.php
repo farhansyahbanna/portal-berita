@@ -74,4 +74,11 @@ class Post extends Model
     {
         return $query->where('status', 'archived');
     }
+
+
+    public function approvedComments()
+    {
+        return $this->hasMany(Comment::class)->where('status', 'approved');
+    }
+
 }

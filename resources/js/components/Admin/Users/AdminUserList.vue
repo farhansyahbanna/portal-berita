@@ -201,6 +201,12 @@
           @page-changed="handlePageChange"
         />
       </div>
+
+      <div class="px-8 py-4">
+        <button @click="goDashboard" class="text-blue-600 hover:text-blue-800 font-medium">
+            ← Kembali
+        </button>
+      </div>
     </div>
 
     <!-- Add/Edit User Modal -->
@@ -627,6 +633,10 @@ export default {
       }
     }
 
+    const goDashboard = () => {
+      router.push('/admin/dashboard')
+    }
+
     // Pastikan modal tertutup saat component mounted
     onMounted(() => {
       
@@ -673,7 +683,8 @@ export default {
       confirmDelete,
       submitForm,
       resetFormAndCloseModal,
-      fetchUsers
+      fetchUsers,
+      goDashboard
     }
   }
 }

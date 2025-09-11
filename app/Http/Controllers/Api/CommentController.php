@@ -28,18 +28,42 @@ class CommentController extends Controller
         ]);
     }
 
-     public function getComments($postId)
+    public function index($postId)
     {
         try {
-            $comments = Comment::where('post_id', $postId)
-                ->orderBy('created_at', 'desc')
-                ->get();
+            $post = Post::find($postId);
 
-            return response()->json($comments);
+            if (!$post) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Post not found'
+                ], 404);
+            }
+
+            $query = Comment::where('post_id', $postId)
+                        ->where('status', 'approved') // Hanya comment approved
+                        ->orderBy('created_at', 'desc');
+
+            $perPage = $request->per_page ?? 10;
+            $comments = $query->paginate($perPage);
+
+            return response()->json([
+                'success' => true,
+                'data' => $comments->items(),
+                'meta' => [
+                    'current_page' => $comments->currentPage(),
+                    'per_page' => $comments->perPage(),
+                    'total' => $comments->total(),
+                    'last_page' => $comments->lastPage(),
+                ]
+            ]);
 
         } catch (\Exception $e) {
+            \Log::error('PostController getComments error: ' . $e->getMessage());
+            
             return response()->json([
-                'error' => 'Gagal mengambil komentar'
+                'success' => false,
+                'message' => 'Failed to fetch comments'
             ], 500);
         }
     }
