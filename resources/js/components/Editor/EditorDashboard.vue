@@ -1,5 +1,5 @@
 <template>
-  <div class="editor-dashboard">
+  <div class="editor-dashboard container mx-auto px-4 py-8">
     <!-- Header -->
     <div class="mb-8">
       <h1 class="text-3xl font-bold text-gray-900">Dashboard Editor</h1>
@@ -38,40 +38,7 @@
       />
     </div>
 
-    <!-- Quick Actions -->
-    <div class="mb-8">
-      <h2 class="text-xl font-semibold text-gray-900 mb-4">Quick Actions</h2>
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <QuickActionCard
-          title="Buat Post Baru"
-          description="Buat konten post baru"
-          icon="plus"
-          color="blue"
-          :to="{ name: 'editor.posts.create' }"
-        />
-        <QuickActionCard
-          title="Kelola Post Saya"
-          description="Lihat dan edit post yang sudah dibuat"
-          icon="edit"
-          color="green"
-          :to="{ name: 'editor.posts' }"
-        />
-        <QuickActionCard
-          title="Post Published"
-          description="Lihat post yang sudah dipublikasi"
-          icon="eye"
-          color="purple"
-          :to="{ name: 'editor.posts', query: { status: 'published' } }"
-        />
-        <QuickActionCard
-          title="Post Pending"
-          description="Lihat post dalam review"
-          icon="clock"
-          color="yellow"
-          :to="{ name: 'editor.posts', query: { status: 'pending' } }"
-        />
-      </div>
-    </div>
+    
 
     <!-- Main Content Grid -->
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -144,6 +111,41 @@
             </div>
           </div>
         </div>
+      </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="mb-8">
+      <h2 class="text-xl font-semibold text-gray-900 mb-4">Quick Actions</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <QuickActionCard
+          title="Buat Post Baru"
+          description="Buat konten post baru"
+          icon="plus"
+          color="blue"
+          :to="{ name: 'editor.posts.create' }"
+        />
+        <QuickActionCard
+          title="Kelola Post Saya"
+          description="Lihat dan edit post yang sudah dibuat"
+          icon="edit"
+          color="green"
+          :to="{ name: 'editor.posts' }"
+        />
+        <QuickActionCard
+          title="Post Published"
+          description="Lihat post yang sudah dipublikasi"
+          icon="eye"
+          color="purple"
+          :to="{ name: 'editor.posts', query: { status: 'published' } }"
+        />
+        <QuickActionCard
+          title="Post Pending"
+          description="Lihat post dalam review"
+          icon="clock"
+          color="yellow"
+          :to="{ name: 'editor.posts', query: { status: 'pending' } }"
+        />
       </div>
     </div>
 

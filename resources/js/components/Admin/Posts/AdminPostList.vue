@@ -103,6 +103,12 @@
         @page-changed="handlePageChange"
       />
     </div>
+    <div class="px-8 py-4">
+        <button @click="goDashboard" class="text-blue-600 hover:text-blue-800 font-medium">
+            ← Kembali
+        </button>
+     </div>
+    
   </div>
 </template>
 
@@ -185,18 +191,22 @@ export default {
       return text.length > length ? text.substring(0, length) + '...' : text
     }
 
+    const currentFilters = ref({
+      page: 1,
+      per_page: 10,
+      status: '',
+      search: ''
+    })
+
     const fetchPosts = async (filters = {}) => {
       try {
         loading.value = true
         error.value = ''
         
         const params = {
-          page: filters.page || 1,
-          per_page: filters.per_page || 10,
-          status: filters.status || '',
-          search: filters.search || ''
+          ...currentFilters.value,
+          ...props.filters
         }
-
         
         
         const response = await makeRequest('/api/admin/posts', 'GET', null, { params })
@@ -232,7 +242,32 @@ export default {
     }
 
     const handlePageChange = (page) => {
-      emit('page-changed', page)
+      console.log('Page changed to:', page)
+      currentFilters.value.page = page
+      fetchPosts()
+    }
+
+    watch(() => props.filters, (newFilters) => {
+      console.log('Filters changed:', newFilters)
+      // Reset ke page 1 ketika filter berubah
+      currentFilters.value.page = 1
+      currentFilters.value = {
+        ...currentFilters.value,
+        ...newFilters
+      }
+      fetchPosts()
+    }, { deep: true })
+
+     const debounce = (func, wait) => {
+      let timeout
+      return function executedFunction(...args) {
+        const later = () => {
+          clearTimeout(timeout)
+          func(...args)
+        }
+        clearTimeout(timeout)
+        timeout = setTimeout(later, wait)
+      }
     }
 
     const editPost = (post) => {
@@ -271,6 +306,15 @@ export default {
       }
     }
 
+    const debouncedSearch = debounce(() => {
+      currentFilters.value.page = 1
+      fetchPosts()
+    }, 500)
+
+    const goDashboard = () => {
+      router.push('/admin/dashboard')
+    }
+
     // Fetch data jika tidak ada initial data
     onMounted(() => {
       console.log('AdminPostList mounted')
@@ -292,7 +336,9 @@ export default {
       handlePageChange,
       editPost,
       deletePost,
-      fetchPosts
+      debouncedSearch,
+      fetchPosts,
+      goDashboard
     }
   }
 }

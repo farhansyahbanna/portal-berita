@@ -33,30 +33,39 @@ class CommentController extends Controller
     }
 
     public function index(Request $request)
-{
-    $query = Comment::query();
+    {
+        try {
+            $query = Comment::with('post'); 
 
-    if ($request->status) {
-        $query->where('status', $request->status);
+            if ($request->filled('status')) {
+                $query->where('status', $request->status);
+            }
+
+            if ($request->filled('search')) {
+                $query->where('content', 'like', '%' . $request->search . '%');
+            }
+
+            $comments = $query->paginate($request->per_page ?? 20);
+
+            return response()->json([
+                'success' => true,
+                'data' => $comments->items(),
+                'meta' => [
+                    'current_page' => $comments->currentPage(),
+                    'per_page' => $comments->perPage(),
+                    'total' => $comments->total(),
+                    'last_page' => $comments->lastPage(),
+                ],
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal mengambil data komentar',
+                'error'   => $e->getMessage(),
+            ], 500);
+        }
     }
-
-    if ($request->search) {
-        $query->where('content', 'like', '%' . $request->search . '%');
-    }
-
-    $comments = $query->paginate($request->per_page ?? 20);
-
-    return response()->json([
-        'success' => true,
-        'data' => $comments->items(),
-        'meta' => [
-            'current_page' => $comments->currentPage(),
-            'per_page' => $comments->perPage(),
-            'total' => $comments->total(),
-            'last_page' => $comments->lastPage(),
-        ],
-    ]);
-}
 
     public function updateStatus(Request $request, $id)
     {
