@@ -20,26 +20,26 @@
       <!-- Form untuk user yang belum login -->
       <div v-if="!isAuthenticated" class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
         <div>
-          <label for="author_name" class="block text-sm font-medium text-gray-700 mb-1">Nama *</label>
+          <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Nama *</label>
           <input
             type="text"
-            id="author_name"
-            v-model="form.author_name"
+            id="name"
+            v-model="form.name"
             required
             class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            :class="{ 'border-red-500': errors.author_name }"
+            :class="{ 'border-red-500': errors.name }"
             placeholder="Masukkan nama Anda"
           />
         </div>
         <div>
-          <label for="author_email" class="block text-sm font-medium text-gray-700 mb-1">Email *</label>
+          <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email *</label>
           <input
             type="email"
-            id="author_email"
-            v-model="form.author_email"
+            id="email"
+            v-model="form.email"
             required
             class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            :class="{ 'border-red-500': errors.author_email }"
+            :class="{ 'border-red-500': errors.email }"
             placeholder="Masukkan email Anda"
           />
         </div>
@@ -95,8 +95,8 @@ export default {
     const { makeRequest } = useApi()
     
     const form = ref({
-      author_name: '',
-      author_email: '',
+      name: '',
+      email: '',
       content: ''
     })
 
@@ -108,8 +108,8 @@ export default {
 
     // Jika user sudah login, isi otomatis data user
     if (isAuthenticated.value && authStore.user) {
-      form.value.author_name = authStore.user.name
-      form.value.author_email = authStore.user.email
+      form.value.name = authStore.user.name
+      form.value.email = authStore.user.email
     }
 
     const submitComment = async () => {
@@ -118,13 +118,20 @@ export default {
         errors.value = {}
         successMessage.value = ''
 
-        const response = await makeRequest(`/api/posts/${props.postId}/comments`, 'POST', form.value)
+      const payload = {
+        post_id: props.postId,       
+        name: form.value.name,
+        email: form.value.email,
+        content: form.value.content
+      }
+
+        const response = await makeRequest(`/api/posts/${props.postId}/comments`, 'POST', payload)
         
         if (response.success) {
           successMessage.value = 'Komentar berhasil dikirim! Menunggu persetujuan admin.'
-          form.value.content = '' // Reset content
+          form.value.content = ''
           
-          // Emit event untuk refresh comments
+          
           emit('comment-added')
         }
         
